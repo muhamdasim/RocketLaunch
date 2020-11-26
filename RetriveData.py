@@ -15,21 +15,32 @@ def loadJson():
     global obj
     a = open('latest.json', 'r')
     obj = json.loads(a.read())
+    return obj
 
 
-def getName():
+def populateDataBase(groups):
     for i in obj['result']:
-        print(i['vehicle']['name'] + " | " + i['missions'][0]['name'], " ", i['pad']['name'])
+        name=i['vehicle']['name'] + " | " + i['missions'][0]['name']+" " + i['pad']['name']
+        time = str(i['win_open'])
+        time = time.replace('T', ' ')
+        time= time.replace('Z', '')
+        location=''
+        try:
+            location=i['pad']['location']['name'] + ' ' + i['pad']['location']['statename']
+        except:
+            location=i['pad']['location']['name'] + ' ' + i['pad']['location']['country']
+        groups.add_item(name,column_values={"text60":time,"location_or_launchpad":location})
+        print(name," Done")
 
 
-def getLocation():
+def populateLocation(groups):
     for i in obj['result']:
-        print(i['pad']['location']['name'], ' ', i['pad']['location']['statename'])
+        try:
+            print(i['pad']['location']['name'] + ' ' + i['pad']['location']['statename'])
+        except:
+            print(i['pad']['location']['name'] + ' ' + i['pad']['location']['country'])
 
 
 def getTime():
     for i in obj['result']:
-        k = str(i['win_open'])
-        k = k.replace('T', ' ')
-        k = k.replace('Z', '')
-        print(k)
+        print()
