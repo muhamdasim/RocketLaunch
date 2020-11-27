@@ -3,13 +3,11 @@ import json
 import requests
 
 
-def storeData():
-    url = 'https://fdo.rocketlaunch.live/json/launches?key=2aef1609-93cc-4012-9b4f-ed5fa84174eb'
-    r = requests.get(url)
-    a = open('latest.json', 'w')
-    a.write(r.text)
-    a.close()
-
+def RocketLauncherData():
+    url = 'https://fdo.rocketlaunch.live/json/launches/next/5'
+    r = requests.get(url,timeout=30)
+    obj = json.loads(r.text)
+    return obj
 
 def loadJson():
     global obj
