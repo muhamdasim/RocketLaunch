@@ -1,18 +1,30 @@
 import RetriveData as DataFetcher
+import time
 import mondayConnection as Database
-import json
-#DataFetcher.storeData()
-k=DataFetcher.loadJson()
 
-print("Connecting to Monday Database")
+print("Connecting to Monday.com")
 try:
-    obj=Database.connection()
+    db=Database.connection()
+    print("Successfully Connected to Monday.com")
 
 except:
-    print("Unable to Connect to Monday :((")
+    "Unable to Connect to Monday.com"
 
 
-groups=obj.get_board(id=639957484).get_group(title='Pending')
+def refreshDB():
+    print("Connecting to Groups")
+    groups=db.get_board(id='846185373').get_group(title='Pending')
+    items=groups.get_items()
+    for i in items:
+        if i.get_column_value(id='numbers').number==1234:
+            print("Found")
+        else:
+            print("Not Found")
 
-print("Don")
 
+
+starttime = time.time()
+while True:
+     refreshDB()
+     time.sleep(10.0 - ((time.time() - starttime) % 10.0))
+     print("Refresher")
