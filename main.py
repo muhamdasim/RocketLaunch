@@ -41,3 +41,5 @@ def refreshDB():
 #     refreshDB()
 #     time.sleep(60.0 - ((time.time() - starttime) % 60.0))
 #     print("Refresher")
+
+Data.populateDataBase(db.get_board(id='846185373').get_group(title='Pending'))
