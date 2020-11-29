@@ -15,31 +15,43 @@ def refreshDB():
     print("Connecting to Groups")
     groups = db.get_board(id='846185373').get_group(title='Pending')
     items = groups.get_items()
+    current_ids = []
+    print("Extraing Ids")
+    for i in items:
+        current_ids.append(int(i.get_column_value(id='numbers').number))
 
-    # Fetching the RocketLauncherObject
-    print("Fetching RocketLauncherDB")
-    rocketLauncerDb = Data.RocketLauncherData()
-    if len(items)==0:
-        Data.populateDataBase()
+    rocketLauncherDb = Data.RocketLauncherData()
+
+    if len(items) == 0:
+        Data.populateDataBase(groups)
     else:
-        for i in rocketLauncerDb['result']:
-            for k in items:
+        for i in rocketLauncherDb['result']:
+            found = False
+            for k in current_ids:
                 # If Record Already Available
-                if k.get_column_value(id='numbers').number == i['id']:
+                if k == i['id']:
                     # Update Old
-                    print("Update Old")
-                # If Record not Available
-                else:
-                    # Add New
-                    print("Add New")
+                    found = True
+                    print("Founded:", i['id'])
+                    break
+            if found:
+                print("Updating OLD:", i['id'])
+
+            else:
+                print("Adding New:", i['id'])
+                Data.AddNew(groups, int(i['id']))
+        print("Fuck OFF")
 
         time.sleep(10)
 
-#
-# starttime = time.time()
-# while True:
-#     refreshDB()
-#     time.sleep(60.0 - ((time.time() - starttime) % 60.0))
-#     print("Refresher")
 
-Data.populateDataBase(db.get_board(id='846185373').get_group(title='Pending'))
+starttime = time.time()
+while True:
+    refreshDB()
+    time.sleep(60.0 - ((time.time() - starttime) % 60.0))
+    print("Refresher")
+
+
+# Data.populateDataBase(db.get_board(id='846185373').get_group(title='Pending'))
+
+groups = db.get_board(id='846185373').get_group(title='Pending')
