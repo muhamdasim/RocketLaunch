@@ -16,15 +16,20 @@ def refreshDB():
     groups = db.get_board(id='846185373').get_group(title='Pending')
     items = groups.get_items()
     current_ids = []
+    item_pointer=[]
     print("Extraing Ids")
     for i in items:
         current_ids.append(int(i.get_column_value(id='numbers').number))
+        item_pointer.append(i)
+        print(i.get_column_value(id='numbers').number,"Done")
 
     rocketLauncherDb = Data.RocketLauncherData()
 
     if len(items) == 0:
-        Data.populateDataBase(groups)
+        Data.populateDataBase(groups,rocketLauncherDb)
     else:
+        id_to_update=None
+        item_to_update=None
         for i in rocketLauncherDb['result']:
             found = False
             for k in current_ids:
@@ -32,14 +37,15 @@ def refreshDB():
                 if k == i['id']:
                     # Update Old
                     found = True
-                    print("Founded:", i['id'])
+                    id_to_update=k
+                    item_to_update=item_pointer[current_ids.index(id_to_update)]
                     break
             if found:
-                print("Updating OLD:", i['id'])
+                Data.updateOld(groups, id_to_update, rocketLauncherDb,item_to_update)
 
             else:
                 print("Adding New:", i['id'])
-                Data.AddNew(groups, int(i['id']))
+                Data.AddNew(groups, int(i['id']),rocketLauncherDb)
         print("Fuck OFF")
 
         time.sleep(10)
