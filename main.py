@@ -18,10 +18,15 @@ def refreshDB():
     current_ids = []
     item_pointer=[]
     print("Extraing Ids")
-    for i in items:
-        current_ids.append(int(i.get_column_value(id='numbers').number))
-        item_pointer.append(i)
-        print(i.get_column_value(id='numbers').number,"Done")
+    try:
+        for i in items:
+            current_ids.append(int(i.get_column_value(id='numbers').number))
+            item_pointer.append(i)
+    except:
+        print("Api ERROR :((( Doing Again")
+        time.sleep(5)
+        refreshDB()
+
 
     rocketLauncherDb = Data.RocketLauncherData()
 
