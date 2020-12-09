@@ -66,16 +66,29 @@ def updateOld(groups,id,obj,item):
             except:
                 location = i['pad']['location']['name'] + ' ' + i['pad']['location']['country']
 
+            OurDate = str(i['win_open'])
+
+            OurDate = OurDate[:OurDate.find('T')]
+            OurTime = OurDate[OurDate.find('T') + 1:]
+
             # Filtering Wind and Temp and Name
             wind_speed = wind_speed.replace('Wind:', '')
             temperature = temperature.replace('Temp:', '')
-            name = name.replace('"', '')
+
 
             print("Testing Updating Old",id)
 
-            item.change_multiple_column_values({"text75": last_modified, "text": temperature, "numbers": id,
-                                                 "text0": wind_speed, "tags": tags, "text6": company,
-                                                 "text60": DateAndHour, "location_or_launchpad": location})
+            try:
+                item.change_multiple_column_values({"text75": last_modified, "text": temperature, "numbers": id,
+                                                     "text0": wind_speed, "tags": tags, "text6": company,
+                                                     "text60": DateAndHour, "location_or_launchpad": location,
+                                                     "date40": OurDate, "time40": OurTime})
+            except:
+                item.change_multiple_column_values({"text75": last_modified, "text": temperature, "numbers": id,
+                                                     "text0": wind_speed, "tags": tags, "text6": company,
+                                                     "text60": DateAndHour, "location_or_launchpad": location})
+
+            time.sleep(3)
             print("Done Updating:", id)
 
 
@@ -137,16 +150,28 @@ def AddNew(groups,id,obj):
             except:
                 location = i['pad']['location']['name'] + ' ' + i['pad']['location']['country']
 
+            OurDate = str(i['win_open'])
+
+            OurDate = OurDate[:OurDate.find('T')]
+            OurTime = OurDate[OurDate.find('T') + 1:]
+
             # Filtering Wind and Temp and Name
             wind_speed = wind_speed.replace('Wind:', '')
             temperature = temperature.replace('Temp:', '')
             name = name.replace('"', '')
+            print(OurDate," ",OurTime)
 
-            groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
-                                                 "text0": wind_speed, "tags": tags, "text6": company,
-                                                 "text60": DateAndHour, "location_or_launchpad": location})
+            try:
+                groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
+                                                     "text0": wind_speed, "tags": tags, "text6": company,
+                                                     "text60": DateAndHour, "location_or_launchpad": location,
+                                                     "date40": {"date": OurDate, "time": OurTime}})
+            except:
+                groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
+                                                     "text0": wind_speed, "tags": tags, "text6": company,
+                                                     "text60": DateAndHour, "location_or_launchpad": location})
+            time.sleep(3)
 
-            print("Done Adding New:", id)
 
 
 def populateDataBase(groups,obj):
@@ -168,7 +193,16 @@ def populateDataBase(groups,obj):
             Hour = Hour.replace('Z', '')
         except:
             Hour = ""
+
+
+
+
         DateAndHour = Date + ' ' + Hour
+
+        OurDatep=str(i['win_open'])
+
+        OurDate=OurDatep[:OurDatep.find('T')]
+        OurTime=OurDatep[OurDatep.find('T'):-1]
 
         # Weather Temperature
         if i['weather_summary'] is not None:
@@ -209,9 +243,18 @@ def populateDataBase(groups,obj):
         wind_speed=wind_speed.replace('Wind:','')
         temperature=temperature.replace('Temp:','')
         name=name.replace('"','')
+        name=name.replace("'",'')
+        try:
+            groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
+                                                "text0": wind_speed, "tags": tags, "text6": company,
+                                                "text60": DateAndHour, "location_or_launchpad": location,
+                                                "date40": {"date":OurDate, "time": OurTime}})
+        except:
+            groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
+                                                 "text0": wind_speed, "tags": tags, "text6": company,
+                                                 "text60": DateAndHour, "location_or_launchpad": location})
 
-        groups.add_item(name, column_values={"text75": last_modified, "text": temperature, "numbers": id,
-                                             "text0": wind_speed, "tags": tags, "text6": company,
-                                             "text60": DateAndHour, "location_or_launchpad": location})
 
+        time.sleep(3)
         print("Done:", id)
+
